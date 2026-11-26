@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard · SmartOffice{% endblock %}
+{% block page_name %}Dashboard{% endblock %}
+{% block content %}
+<section class="welcome-hero">
+  <div class="hero-copy"><span class="hero-kicker">YOUR WORKSPACE, IN SYNC</span><h1>Good day, {{ session.get('name').split(' ')[0] }}! <span>👋</span></h1><p>Manage your workspace, book resources, and stay productive.</p><a class="hero-cta" href="{{ url_for('book') }}">＋ Create a booking <span>→</span></a></div>
+  <div class="hero-art" aria-hidden="true"><div class="art-glow"></div><div class="art-window"><div class="art-window-top"><i></i><i></i><i></i></div><div class="art-desk"><span></span><b></b><i></i></div><div class="art-chair"></div><div class="art-plant plant-one"><i></i><i></i><i></i><b></b></div><div class="art-plant plant-two"><i></i><i></i><i></i><b></b></div></div></div>
+  <div class="hero-orb orb-one"></div><div class="hero-orb orb-two"></div>
+</section>
+<div class="stats stats-modern">
+  <a class="stat-card stat-blue stat-link" href="{{ url_for("employees") if session.get("role") in ["ADMIN","FACILITY_MANAGER"] else url_for("bookings") }}"><div class="stat-top"><span>Active employees</span><span class="stat-icon">♙</span></div><strong>{{ stats.employees }}</strong><small><i class="live-dot"></i> Registered users</small><div class="stat-watermark">♙</div></a>
+  <a class="stat-card stat-violet stat-link" href="{{ url_for("resources") }}"><div class="stat-top"><span>Available desks</span><span class="stat-icon">▤</span></div><strong>{{ stats.available_desks }}</strong><small>{{ stats.occupied_desks }} occupied · {{ stats.desks }} total</small><div class="stat-watermark">▤</div></a>
+  <a class="stat-card stat-peach stat-link" href="{{ url_for("resources") }}"><div class="stat-top"><span>Meeting rooms</span><span class="stat-icon">♧</span></div><strong>{{ stats.rooms }}</strong><small>Bookable spaces</small><div class="stat-watermark">♧</div></a>
+  <a class="stat-card stat-mint stat-link" href="{{ url_for("bookings") }}"><div class="stat-top"><span>Today's bookings</span><span class="stat-icon">▦</span></div><strong>{{ stats.bookings }}</strong><small>{{ stats.checkins }} checked in</small><div class="stat-watermark">▦</div></a>
+</div>
+<div class="dashboard-grid">
+  <section class="panel recent-panel"><div class="panel-heading"><div><div class="heading-icon purple-icon">▦</div><div><h2>Recent bookings</h2><p>Latest workspace reservations</p></div></div><a class="text-link" href="{{ url_for('bookings') }}">View all <span>→</span></a></div>
+    <div class="table-wrap"><table><thead><tr><th>Employee</th><th>Resource</th><th>Date</th><th>Time</th><th>Status</th></tr></thead><tbody>
+    {% for b in recent %}<tr><td><div class="employee-cell"><span class="employee-avatar avatar-{{ loop.index0 % 4 }}">{{ b.employee_name[0] }}</span><b>{{ b.employee_name }}</b></div></td><td>{{ b.resource_type }} · {{ b.resource_code }}</td><td>{{ b.booking_date }}</td><td>{{ b.start_time }} – {{ b.end_time }}</td><td><span class="status {{ b.status|lower }}">{{ b.status.replace('_',' ') }}</span></td></tr>{% else %}<tr><td colspan="5" class="empty">No bookings yet. Create your first booking.</td></tr>{% endfor %}
+    </tbody></table></div>
+  </section>
+  <aside class="right-column">
+    <section class="panel availability-panel"><div class="panel-heading compact-heading"><div><div class="heading-icon violet-icon">◉</div><div><h2>Workspace pulse</h2><p>Live resource snapshot</p></div></div><span class="live-label"><i></i> LIVE</span></div>
+      <div class="pulse-content"><div class="availability-ring" style="--availability: {{ (stats.available_desks / stats.desks * 100) if stats.desks else 0 }}%"><div><strong>{{ stats.available_desks }}</strong><small>available<br>desks</small></div></div><div class="pulse-legend"><div><i class="legend-green"></i><span>Available desks</span><b>{{ stats.available_desks }}</b></div><div><i class="legend-blue"></i><span>Occupied desks</span><b>{{ stats.occupied_desks }}</b></div><div><i class="legend-purple"></i><span>Meeting rooms</span><b>{{ stats.rooms }}</b></div></div></div>
+    </section>
+    <section class="panel quick-panel"><div class="panel-heading compact-heading"><div><div class="heading-icon bolt-icon">ϟ</div><div><h2>Quick actions</h2><p>Jump back into work</p></div></div></div><div class="quick-actions"><a href="{{ url_for('book') }}"><span class="quick-icon blue-quick">▦</span><b>Book desk</b></a><a href="{{ url_for('book') }}"><span class="quick-icon purple-quick">♧</span><b>Book room</b></a><a href="{{ url_for('resources') }}"><span class="quick-icon teal-quick">▥</span><b>Resources</b></a><a href="{{ url_for('floor_map') }}"><span class="quick-icon purple-quick">▦</span><b>Floor map</b></a>{% if session.get('role') in ['ADMIN','FACILITY_MANAGER'] %}<a href="{{ url_for('reports') }}"><span class="quick-icon orange-quick">▥</span><b>Reports</b></a>{% endif %}</div></section>
+  </aside>
+</div>
+<div class="smart-banner"><div class="banner-symbol">✦</div><div><b>Smart allocation. Zero conflicts.</b><p>Real-time booking checks · Conflict prevention · Better space utilization</p></div><span class="banner-spark">✧</span></div>
+{% endblock %}

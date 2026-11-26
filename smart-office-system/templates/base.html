@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}SmartOffice{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+</head>
+<body>
+{% if session.get('user_id') %}
+<aside class="sidebar">
+  <a class="brand" href="{{ url_for('dashboard') }}"><span class="brand-icon">✦</span><span>SmartOffice<small>WORKSPACE ALLOCATION</small></span></a>
+  <div class="nav-label">WORKSPACE</div>
+  <a class="{% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}"><span class="nav-ico">▦</span>Dashboard</a>
+  <a class="{% if request.endpoint == 'book' %}active{% endif %}" href="{{ url_for('book') }}"><span class="nav-ico">＋</span>New booking</a>
+  <a class="{% if request.endpoint == 'bookings' %}active{% endif %}" href="{{ url_for('bookings') }}"><span class="nav-ico">▤</span>My bookings</a>
+  <a class="{% if request.endpoint == 'resources' %}active{% endif %}" href="{{ url_for('resources') }}"><span class="nav-ico">▥</span>Resources</a>
+  <a class="{% if request.endpoint == 'floor_map' %}active{% endif %}" href="{{ url_for('floor_map') }}"><span class="nav-ico">▦</span>Floor map</a>
+  {% if session.get('role') in ['ADMIN','FACILITY_MANAGER'] %}
+  <div class="nav-label management-label">MANAGEMENT</div>
+  <a class="{% if request.endpoint == 'employees' %}active{% endif %}" href="{{ url_for('employees') }}"><span class="nav-ico">♙</span>Employees</a>
+  <a class="{% if request.endpoint == 'reports' %}active{% endif %}" href="{{ url_for('reports') }}"><span class="nav-ico">▥</span>Reports & analytics</a>
+  <a class="{% if request.endpoint == 'queries' %}active{% endif %}" href="{{ url_for('queries') }}"><span class="nav-ico">⌘</span>SQL query lab</a>
+  <a class="{% if request.endpoint == 'access_logs' %}active{% endif %}" href="{{ url_for('access_logs') }}"><span class="nav-ico">☷</span>Access logs</a>
+  {% endif %}
+  <div class="sidebar-bottom"><div class="profile-avatar">{{ session.get('name','U')[0] }}</div><div class="profile-copy"><b>{{ session.get('name') }}</b><small>{{ session.get('role','').replace('_',' ') }}</small></div><a class="logout" href="{{ url_for('logout') }}" title="Sign out">↗</a></div>
+</aside>
+{% endif %}
+<main class="main {% if not session.get('user_id') %}no-sidebar{% endif %}">
+{% if session.get('user_id') %}
+<header class="topbar"><div class="crumb"><span>Workspace</span><i>/</i><b>{% block page_name %}Overview{% endblock %}</b></div><div class="top-actions"><div class="search-box"><span>⌕</span><input aria-label="Search" placeholder="Search desks, rooms, employees..." disabled></div><span class="notification" title="Notifications">♧<i></i></span><div class="top-avatar">{{ session.get('name','U')[0] }}</div></div></header>
+{% endif %}
+<section class="content">
+{% with messages=get_flashed_messages(with_categories=true) %}{% if messages %}{% for category,message in messages %}<div class="alert {{ category }}">{{ message }} <button onclick="this.parentElement.remove()">×</button></div>{% endfor %}{% endif %}{% endwith %}
+{% block content %}{% endblock %}
+</section>
+<footer>SmartOffice <span>·</span> Smarter spaces. Better workdays.</footer>
+</main>
+</body></html>

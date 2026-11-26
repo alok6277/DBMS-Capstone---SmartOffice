@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Floor map · SmartOffice{% endblock %}
+{% block page_name %}Floor map{% endblock %}
+{% block content %}
+<div class="page-head floor-head">
+  <div><span class="eyebrow">WORKSPACE LIVE VIEW</span><h1>Office floor map</h1><p class="muted">See which desks and meeting rooms are available for your selected date.</p></div>
+  <form class="floor-date-form" method="get"><label for="map-date">View date</label><input id="map-date" type="date" name="date" value="{{ selected_date }}"><button class="btn primary">Update view</button></form>
+</div>
+<div class="floor-summary">
+  <div><span class="floor-dot available-dot"></span><b>{{ available }}</b><small>Available desks</small></div>
+  <div><span class="floor-dot occupied-dot"></span><b>{{ occupied }}</b><small>Reserved / occupied</small></div>
+  <div><span class="floor-dot room-dot"></span><b>{{ room_count }}</b><small>Meeting rooms</small></div>
+  <div class="floor-summary-date"><span>Selected date</span><b>{{ selected_date }}</b></div>
+</div>
+<section class="panel floor-panel">
+  <div class="floor-panel-heading"><div><span class="heading-icon purple-icon">▦</span><div><h2>Desks & workstations</h2><p>Choose an available desk to start a reservation</p></div></div><span class="floor-count">{{ desks|length }} desks</span></div>
+  <div class="floor-grid">
+  {% for d in desks %}
+    {% set is_available = d.status == 'ACTIVE' and not d.start_time %}
+    <article class="floor-tile {% if d.status != 'ACTIVE' %}tile-disabled{% elif is_available %}tile-available{% else %}tile-occupied{% endif %}">
+      <div class="tile-top"><span class="tile-icon">▦</span><span class="tile-state">{{ 'AVAILABLE' if is_available else ('INACTIVE' if d.status != 'ACTIVE' else 'RESERVED') }}</span></div>
+      <h3>Desk {{ d.resource_code }}</h3><p>{{ d.zone_name }} · {{ d.floor_name }}</p>
+      <div class="tile-bottom"><small>Capacity {{ d.capacity }}</small>
+      {% if is_available %}<a href="{{ url_for('book') }}">Book desk →</a>{% elif d.start_time %}<small>{{ d.start_time }}–{{ d.end_time }}</small>{% else %}<small>Unavailable</small>{% endif %}
+      </div>
+      {% if d.employee_name %}<div class="tile-booked-by">Reserved by {{ d.employee_name }}</div>{% endif %}
+    </article>
+  {% else %}<p class="empty">No desks have been added yet.</p>{% endfor %}
+  </div>
+</section>
+<section class="panel floor-panel room-floor-panel">
+  <div class="floor-panel-heading"><div><span class="heading-icon violet-icon">♧</span><div><h2>Meeting rooms</h2><p>Rooms with capacity and reservation status</p></div></div><span class="floor-count">{{ rooms|length }} rooms</span></div>
+  <div class="floor-grid room-grid">
+  {% for r in rooms %}
+    {% set is_available = r.status == 'ACTIVE' and not r.start_time %}
+    <article class="floor-tile room-tile {% if r.status != 'ACTIVE' %}tile-disabled{% elif is_available %}tile-available{% else %}tile-occupied{% endif %}">
+      <div class="tile-top"><span class="tile-icon">♧</span><span class="tile-state">{{ 'AVAILABLE' if is_available else ('INACTIVE' if r.status != 'ACTIVE' else 'RESERVED') }}</span></div>
+      <h3>{{ r.resource_code }}</h3><p>{{ r.zone_name }} · {{ r.floor_name }}</p>
+      <div class="tile-bottom"><small>Capacity {{ r.capacity }}</small>
+      {% if is_available %}<a href="{{ url_for('book') }}">Book room →</a>{% elif r.start_time %}<small>{{ r.start_time }}–{{ r.end_time }}</small>{% else %}<small>Unavailable</small>{% endif %}
+      </div>
+      {% if r.employee_name %}<div class="tile-booked-by">Reserved by {{ r.employee_name }}</div>{% endif %}
+    </article>
+  {% else %}<p class="empty">No meeting rooms have been added yet.</p>{% endfor %}
+  </div>
+</section>
+<div class="floor-map-note">Availability is calculated from active reservations. For today's view, a resource is marked occupied only during its booking time.</div>
+{% endblock %}

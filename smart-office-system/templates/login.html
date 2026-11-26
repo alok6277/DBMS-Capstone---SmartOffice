@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Sign in · SmartOffice{% endblock %}
+{% block content %}
+<div class="login-shell">
+<section class="login-showcase"><div class="login-brand-mark">✦</div>
+<div class="login-showcase-copy"><span class="hero-kicker">THE FUTURE OF WORKSPACE</span><h1>Make room for<br><em>better work.</em></h1>
+<p>One intelligent place to discover desks, reserve meeting rooms and bring your team together.</p>
+<div class="login-feature-list"><div><span>✓</span> Smart desk & room reservations</div><div><span>✓</span> Real-time conflict prevention</div><div><span>✓</span> Workspace insights & utilization</div></div></div>
+<div class="login-illustration"><div class="login-window"><div class="window-dots"><i></i><i></i><i></i></div><div class="login-monitor"></div><div class="login-table"></div><div class="login-chair"></div><div class="login-plant">✿</div></div></div>
+<div class="login-showcase-foot">SMARTOFFICE <span>·</span> SMARTER SPACES. BETTER WORKDAYS.</div></section>
+<section class="login-form-side"><div class="login-panel panel"><span class="eyebrow">WELCOME BACK</span><h2>Sign in to your workspace</h2><p class="muted">Enter your account details to continue.</p>
+<form method="post"><label>Email address</label><input type="email" name="email" placeholder="you@company.com" autocomplete="username" required><label>Password</label><input type="password" name="password" placeholder="Enter password" autocomplete="current-password" required><button class="btn primary full">Sign in <span>→</span></button></form>
+<div class="demo-box"><b>Demo accounts</b><small><strong>Admin</strong> · admin@smartoffice.local / Admin@123</small><small><strong>Facility</strong> · facility@smartoffice.local / Facility@123</small><small><strong>Employee</strong> · aarav@smartoffice.local / Employee@123</small></div><div class="login-secure">⌑ &nbsp; Secure workspace access</div></div></section></div>
+{% endblock %}
